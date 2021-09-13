@@ -13,6 +13,7 @@ using namespace std;
 int menu();
 void addToFile();
 void printAllFile();
+void header(); //print titles of columns 
 
 /**
 * <code>main</code> is the main function of the program
@@ -29,23 +30,74 @@ int main()
         choice = menu();
         switch (choice)
         {
-        case 1:
+        case 1: //new record 
+            cout << "\nEnter account number: ";
+            cin >> record.account_no;
+            cout << "Enter first name: ";
+            cin >> record.first_name;
+            cout << "Enter last name: ";
+            cin >> record.last_name;
+            cout << "Enter balance: ";
+            cin >> record.balance;
+
+            //file.open("BankRecords.txt", ios::)//use binary file (c++ book pg 531)
+            /*
+            * 1)check if file exits, if not create file
+            * 2)if there is stuff on file add to list
+            * 3) clear file and send all from list to file
+            */
+            records.insert(record);
             break;
-        case 2:
+        case 2: //deposit
+            cout << "\nEnter account number: ";
+            cin >> record.account_no;
+            cout << "Enter amount to deposit: ";
+            cin >> record.balance;
+            records.modify("DEPOSIT", record);
+            cout << "Balance has been updated";
             break;
-        case 3:
+        case 3: //withdraw 
+            cout << "\nEnter account number: ";
+            cin >> record.account_no;
+            cout << "Enter amount to withdraw: ";
+            cin >> record.balance;
+            records.modify("WITHDRAW", record);
+            cout << "Balance has been updated";
             break;
         case 4: //show record
         {
             cout << "Enter the account number: ";
             cin >> record.account_no;
+            if (records.search(record) == success)
+            {
+
+            }
+            else cout << "Account does not exist!";
             break;
         }
-        case 5:
+        case 5: //show all records
+            //print from file or list 
             break;
-        case 6:
+        case 6: //update record
+            cout << "\nEnter account number: ";
+            cin >> record.account_no;
+            cout << "Enter first name: ";
+            cin >> record.first_name;
+            cout << "Enter last name: ";
+            cin >> record.last_name;
+            cout << "Enter balance: ";
+            cin >> record.balance;
+            if (records.modify("UPDATE", record) == success)
+                cout << "Account has been updated";
+            else cout << "Account does not exist!";
             break;
-        case 7:
+        case 7: //delete record
+            //filetolist function if the file exists and list is empty
+            cout << "\nEnter account number: ";
+            cin >> record.account_no;
+            if (records.remove(record) == success)
+                cout << "Account has been deleted.";
+            else cout << "Account does not exist!";
             break;
         case 8: //Quit the program
             break;

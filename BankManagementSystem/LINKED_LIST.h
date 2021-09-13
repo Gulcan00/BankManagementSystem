@@ -28,10 +28,11 @@ public:
 	void clear();
 	bool empty() const;
 	int size() const;
+	void traverse(void(*visit)(T&));
 	Error_code remove(const T& item);
 	Error_code insert(const T& item);
-	Error_code search(T& item) const;//also include traverse??
-	//Error_code modify();//to update also change balance
+	Error_code search(T& item) const;
+	Error_code modify(string key, T &item);
 	// Safequards
 	~List();
 	List(const List<T>& copy);
@@ -94,6 +95,17 @@ int List<T>::size() const
 		temp = temp->next;
 	}
 	return count;
+}
+
+template<class T>
+void List<T>::traverse(void(*visit)(T&))
+{
+	Node<T>* temp = head;
+	while (temp != NULL)
+	{
+		(*visit)(temp->entry);
+		temp = temp->next;
+	}
 }
 
 
@@ -175,6 +187,27 @@ Error_code List<T>::remove(const T& item)
 		}
 	}
 	return not_found;
+}
+
+template <class T>
+Error_code List<T>::modify(string key, T &item)
+{
+	Node<T>* temp = head;
+	while(temp != NULL)
+	{
+		if (temp->entry.account_no == item.account_no)
+		{
+			if (key == WITHDRAW)
+				temp->entry.balance -= item.balance;
+			else if (key == DEPOSIT)
+				temp->entry.balance += item.balance;
+			else if (key == UPDATE)
+				temp->entry = item;
+			return success;
+		}
+		temp = temp->next;
+	}
+	return not_found;	
 }
 
 // ------- Safeguards ----------
