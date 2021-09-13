@@ -3,12 +3,10 @@
 *   \description The system can add, modify, remove and display accounts from the file
 *   \author Gulcan Damdelen
 *   \date 11/09/2021
-**/
+*/
 
-#include <iostream>
 #include <fstream>
-#include <string>
-#include "LinkedList.h"
+#include "LINKED_LIST.h"
 using namespace std;
 
 //Function prototypes
@@ -16,24 +14,17 @@ int menu();
 void addToFile();
 void printAllFile();
 
-struct account {
-    int account_no;
-    string first_name;
-    string last_name;
-    double balance;
-};
-
 /**
 * <code>main</code> is the main function of the program
 * <BR>
 * @return Returns 0 if success, any other value otherwise
-**/
+*/
 int main()
 {
     int choice;
     fstream file;
- //   List<account> bankRecord;
-    account bankAcc;
+    Account record;
+    List<Account> records;
     do {
         choice = menu();
         switch (choice)
@@ -47,10 +38,7 @@ int main()
         case 4: //show record
         {
             cout << "Enter the account number: ";
-            cin >> bankAcc.account_no;
-            //if (bankRecord.search(bankAcc) == success);
-                //display bankAcc
-            //else cout << "Bank account not found!\n";
+            cin >> record.account_no;
             break;
         }
         case 5:

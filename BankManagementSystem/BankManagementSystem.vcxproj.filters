@@ -18,12 +18,9 @@
     <ClCompile Include="BankManagementSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LinkedList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LinkedList.h">
+    <ClInclude Include="LINKED_LIST.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

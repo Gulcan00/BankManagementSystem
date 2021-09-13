@@ -1,4 +1,45 @@
-#include "LinkedList.h"
+#pragma once
+#include <iostream>
+#include <string>
+using namespace std;
+
+
+enum Error_code { success, overflow, underflow, not_found };
+
+struct Account {
+	int account_no;
+	string first_name;
+	string last_name;
+	double balance;
+};
+
+template <class T>
+struct Node {
+	T entry;
+	Node<T>* next;
+	Node();
+	Node(const T item, Node<T>* link = NULL);
+};
+
+template <class T>
+class List {
+public:
+	List();
+	void clear();
+	bool empty() const;
+	int size() const;
+	Error_code remove(const T& item);
+	Error_code insert(const T& item);
+	Error_code search(T& item) const;//also include traverse??
+	//Error_code modify();//to update also change balance
+	// Safequards
+	~List();
+	List(const List<T>& copy);
+	void operator = (const List<T>& original);
+private:
+	Node<T>* head;
+};
+
 
 template <class T>
 Node<T>::Node()
@@ -7,7 +48,7 @@ Node<T>::Node()
 }
 
 template <class T>
-Node<T>::Node(T item, Node<T>* add_on)
+Node<T>::Node(const T item, Node<T>* add_on)
 {
 	entry = item;
 	next = add_on;
@@ -64,7 +105,7 @@ Error_code List<T>::insert(const T& item)
 	if (new_entry == NULL) return overflow;   // IF FULL
 	else if (empty())
 		head = new_entry;
-	else if (item < head->entry)
+	else if (item.account_no < head->entry)
 	{
 		new_entry->next = head;
 		head = new_entry;
@@ -75,7 +116,7 @@ Error_code List<T>::insert(const T& item)
 
 		while (current != NULL)
 		{
-			if (item < current->entry)
+			if (item.account_no < current->entry.account_no)
 			{
 				new_entry->next = current;
 				break;
@@ -89,7 +130,7 @@ Error_code List<T>::insert(const T& item)
 }
 
 template <class T>
-Error_code List<T>::search(T& item)
+Error_code List<T>::search(T& item) const
 {
 	Node<T>* temp = head;
 	while (temp != NULL)
@@ -103,13 +144,14 @@ Error_code List<T>::search(T& item)
 	}
 	return not_found;
 }
+
 template <class T>
 Error_code List<T>::remove(const T& item)
 {
 	Node<T>* current = head;
 	if (empty()) return underflow;
-	if (item < head->entry) return not_found;
-	if (item == head->entry)
+	if (item.account_no < head->entry.account_no) return not_found;
+	if (item.account_no == head->entry.account_no)
 	{
 		head = head->next;
 		delete current;
@@ -119,8 +161,8 @@ Error_code List<T>::remove(const T& item)
 	current = current->next;
 	while (current != NULL)
 	{
-		if (item < head->entry) break;
-		if (item == current->entry)
+		if (item.account_no < head->entry.account_no) break;
+		if (item.account_no == current->entry.account_no)
 		{
 			previous->next = current->next;
 			delete current;
@@ -135,31 +177,12 @@ Error_code List<T>::remove(const T& item)
 	return not_found;
 }
 
-
-template <class T>
-void List<T>::print() const
-{
-	Node<T>* temp = head;
-
-	if (empty())
-		cout << "Empty List" << endl;
-	else
-		while (temp != NULL)
-		{
-			cout << temp->entry << "  ";
-			temp = temp->next;
-		}
-	cout << endl << endl;
-}
-
 // ------- Safeguards ----------
 
 template <class T>
 List<T>::~List()
 {
 	Node<T>* temp;
-
-
 	while (head != NULL)
 	{
 		temp = head;
@@ -205,4 +228,5 @@ void List<T>::operator=(const List<T>& original)
 	clear();
 	head = new_head;
 }
+
 
