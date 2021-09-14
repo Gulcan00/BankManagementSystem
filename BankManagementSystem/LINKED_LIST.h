@@ -117,7 +117,7 @@ Error_code List<T>::insert(const T& item)
 	if (new_entry == NULL) return overflow;   // IF FULL
 	else if (empty())
 		head = new_entry;
-	else if (item.account_no < head->entry)
+	else if (item.account_no < head->entry.account_no)
 	{
 		new_entry->next = head;
 		head = new_entry;
@@ -197,11 +197,11 @@ Error_code List<T>::modify(string key, T &item)
 	{
 		if (temp->entry.account_no == item.account_no)
 		{
-			if (key == WITHDRAW)
+			if (key == "WITHDRAW")
 				temp->entry.balance -= item.balance;
-			else if (key == DEPOSIT)
+			else if (key == "DEPOSIT")
 				temp->entry.balance += item.balance;
-			else if (key == UPDATE)
+			else if (key == "UPDATE")
 				temp->entry = item;
 			return success;
 		}

@@ -4,16 +4,18 @@
 *   \author Gulcan Damdelen
 *   \date 11/09/2021
 */
-
+//THINGS TO DO: ERROR- NOT WRITING AND READING TO BINARY FILE!!!! -check if at end of file (memory runtime error)
 #include <fstream>
+#include <iomanip>
 #include "LINKED_LIST.h"
 using namespace std;
 
 //Function prototypes
 int menu();
-void addToFile();
-void printAllFile();
-void header(); //print titles of columns 
+void fileToList(List<Account> &records);
+void recordToFile(Account &record);
+void print(Account &);
+void header();  
 
 /**
 * <code>main</code> is the main function of the program
@@ -39,44 +41,73 @@ int main()
             cin >> record.last_name;
             cout << "Enter balance: ";
             cin >> record.balance;
-
-            //file.open("BankRecords.txt", ios::)//use binary file (c++ book pg 531)
-            /*
-            * 1)check if file exits, if not create file
-            * 2)if there is stuff on file add to list
-            * 3) clear file and send all from list to file
-            */
             records.insert(record);
+
+            file.open("BankRecords.dat", ios::in | ios::binary);
+            if (file.fail())
+            {
+                file.close();
+                file.open("BankRecords.dat", ios::out | ios::binary);
+                file.close();
+            }
+            if(!file.fail()) {
+                file.close();
+                recordToFile(record);
+                records.clear();
+                fileToList(records);
+                file.open("BankRecords.dat", ios::out | ios::binary);
+                file.close();
+                records.traverse(recordToFile);
+            }
+           
             break;
         case 2: //deposit
             cout << "\nEnter account number: ";
             cin >> record.account_no;
             cout << "Enter amount to deposit: ";
             cin >> record.balance;
-            records.modify("DEPOSIT", record);
-            cout << "Balance has been updated";
+            if (records.modify("DEPOSIT", record) == success)
+            {
+                cout << "Balance has been updated";
+                fileToList(records);
+                file.open("BankRecords.dat", ios::out | ios::binary);
+                file.close();
+                records.traverse(recordToFile);
+            }
+            else cout << "Account not found";
             break;
         case 3: //withdraw 
             cout << "\nEnter account number: ";
             cin >> record.account_no;
             cout << "Enter amount to withdraw: ";
             cin >> record.balance;
-            records.modify("WITHDRAW", record);
-            cout << "Balance has been updated";
+            if (records.modify("WITHDRAW", record) == success)
+            {
+                cout << "Balance has been updated";
+                fileToList(records);
+                file.open("BankRecords.dat", ios::out | ios::binary);
+                file.close();
+                records.traverse(recordToFile);
+            }
+            else cout << "Account not found";
             break;
         case 4: //show record
         {
+            fileToList(records);
             cout << "Enter the account number: ";
             cin >> record.account_no;
             if (records.search(record) == success)
             {
-
+                header();
+                print(record);
             }
             else cout << "Account does not exist!";
             break;
         }
         case 5: //show all records
-            //print from file or list 
+            fileToList(records);
+            header();
+            records.traverse(print);
             break;
         case 6: //update record
             cout << "\nEnter account number: ";
@@ -88,15 +119,28 @@ int main()
             cout << "Enter balance: ";
             cin >> record.balance;
             if (records.modify("UPDATE", record) == success)
+            {
                 cout << "Account has been updated";
+                fileToList(records);
+                file.open("BankRecords.dat", ios::out | ios::binary);
+                file.close();
+                records.traverse(recordToFile);
+            }
             else cout << "Account does not exist!";
             break;
+
         case 7: //delete record
             //filetolist function if the file exists and list is empty
             cout << "\nEnter account number: ";
             cin >> record.account_no;
             if (records.remove(record) == success)
+            {
                 cout << "Account has been deleted.";
+                fileToList(records);
+                file.open("BankRecords.dat", ios::out | ios::binary);
+                file.close();
+                records.traverse(recordToFile);
+            }
             else cout << "Account does not exist!";
             break;
         case 8: //Quit the program
@@ -132,7 +176,49 @@ int menu()
     return choice;
 }
 
-void addToFile()
+/**
+* <code>fileToList</code> takes all records from file and adds them to a list 
+* @param file The file which contains the records
+* @param records The list which the records will be added to 
+*/
+void fileToList(List<Account>& records)
 {
+    fstream file;
+    file.open("BankRecords.dat", ios::in | ios::binary);
+    Account record;
+    while (file.read(reinterpret_cast<char*> (&record), sizeof(Account)))
+    {
+        records.insert(record);
+    }
+    file.close();
+}
 
+/**
+* 
+*/
+void recordToFile(Account &record)
+{
+    fstream binaryio;
+    binaryio.open("BankRecords.dat", ios::in | ios::out | ios::binary);
+    binaryio.write(reinterpret_cast<char*>(&record), sizeof(record));
+    binaryio.close();
+}
+
+
+/**
+* <code>print</code> print displays the bank record of a user
+* @param item The struct containg details of bank record
+*/
+void print(Account& item)
+{
+    cout << item.account_no << setw(10) << item.first_name << setw(10) << item.last_name << setw(10);
+    cout << item.balance << endl;
+}
+
+/**
+* <code>header</code> prints the header line 
+*/
+void header()
+{
+    cout << "ACC. ID" << setw(10) << "NAME" << setw(10) << "SURNAME" << setw(10) << "BALANCE" << endl;
 }
