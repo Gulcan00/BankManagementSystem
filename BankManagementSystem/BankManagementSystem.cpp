@@ -4,7 +4,7 @@
 *   \author Gulcan Damdelen
 *   \date 11/09/2021
 */
-//THINGS TO DO: ERROR- NOT WRITING AND READING TO BINARY FILE!!!! -check if at end of file (memory runtime error)
+
 #include <fstream>
 #include <iomanip>
 #include "LINKED_LIST.h"
@@ -190,11 +190,13 @@ void fileToList(List<Account>& records)
     {
         records.insert(record);
     }
+    file.seekg(0);
     file.close();
 }
 
 /**
-* 
+* <code>recordToFile</code> writes a record to the binary file
+* @param record The account struct containing user details
 */
 void recordToFile(Account &record)
 {
