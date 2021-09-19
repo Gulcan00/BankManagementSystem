@@ -1,5 +1,5 @@
 /** \file BankManagementSystem.cpp
-*   \brief A bank system to manage accounts in a file
+*   \brief A bank system to manage accounts in a binary file
 *   \description The system can add, modify, remove and display accounts from the file
 *   \author Gulcan Damdelen
 *   \date 11/09/2021
@@ -47,7 +47,7 @@ int main()
             if (file.fail())
             {
                 file.close();
-                file.open("BankRecords.dat", ios::out | ios::binary);
+                file.open("BankRecords.dat", ios::out | ios::binary);//create file if it does not exist
                 file.close();
             }
             if(!file.fail()) {
@@ -66,10 +66,11 @@ int main()
             cin >> record.account_no;
             cout << "Enter amount to deposit: ";
             cin >> record.balance;
+            records.clear();
+            fileToList(records);
             if (records.modify("DEPOSIT", record) == success)
             {
                 cout << "Balance has been updated";
-                fileToList(records);
                 file.open("BankRecords.dat", ios::out | ios::binary);
                 file.close();
                 records.traverse(recordToFile);
@@ -81,10 +82,11 @@ int main()
             cin >> record.account_no;
             cout << "Enter amount to withdraw: ";
             cin >> record.balance;
+            records.clear();
+            fileToList(records);
             if (records.modify("WITHDRAW", record) == success)
             {
                 cout << "Balance has been updated";
-                fileToList(records);
                 file.open("BankRecords.dat", ios::out | ios::binary);
                 file.close();
                 records.traverse(recordToFile);
@@ -93,6 +95,7 @@ int main()
             break;
         case 4: //show record
         {
+            records.clear();
             fileToList(records);
             cout << "Enter the account number: ";
             cin >> record.account_no;
@@ -105,6 +108,7 @@ int main()
             break;
         }
         case 5: //show all records
+            records.clear();
             fileToList(records);
             header();
             records.traverse(print);
@@ -118,11 +122,12 @@ int main()
             cin >> record.last_name;
             cout << "Enter balance: ";
             cin >> record.balance;
+            records.clear();
+            fileToList(records);
             if (records.modify("UPDATE", record) == success)
             {
                 cout << "Account has been updated";
-                fileToList(records);
-                file.open("BankRecords.dat", ios::out | ios::binary);
+                file.open("BankRecords.dat", ios::out);
                 file.close();
                 records.traverse(recordToFile);
             }
@@ -130,14 +135,14 @@ int main()
             break;
 
         case 7: //delete record
-            //filetolist function if the file exists and list is empty
             cout << "\nEnter account number: ";
             cin >> record.account_no;
+            records.clear();
+            fileToList(records);
             if (records.remove(record) == success)
             {
                 cout << "Account has been deleted.";
-                fileToList(records);
-                file.open("BankRecords.dat", ios::out | ios::binary);
+                file.open("BankRecords.dat", ios::out);
                 file.close();
                 records.traverse(recordToFile);
             }
@@ -178,7 +183,6 @@ int menu()
 
 /**
 * <code>fileToList</code> takes all records from file and adds them to a list 
-* @param file The file which contains the records
 * @param records The list which the records will be added to 
 */
 void fileToList(List<Account>& records)
@@ -190,19 +194,18 @@ void fileToList(List<Account>& records)
     {
         records.insert(record);
     }
-    file.seekg(0);
     file.close();
 }
 
 /**
 * <code>recordToFile</code> writes a record to the binary file
-* @param record The account struct containing user details
+* @param record The account struct containing user bank details
 */
 void recordToFile(Account &record)
 {
     fstream binaryio;
-    binaryio.open("BankRecords.dat", ios::in | ios::out | ios::binary);
-    binaryio.write(reinterpret_cast<char*>(&record), sizeof(record));
+    binaryio.open("BankRecords.dat", ios::app | ios::binary);
+    binaryio.write(reinterpret_cast<char*>(&record), sizeof(Account));
     binaryio.close();
 }
 
@@ -213,8 +216,8 @@ void recordToFile(Account &record)
 */
 void print(Account& item)
 {
-    cout << item.account_no << setw(10) << item.first_name << setw(10) << item.last_name << setw(10);
-    cout << item.balance << endl;
+    cout << item.account_no << setw(10) << " " << item.first_name << setw(10) << " " << item.last_name << setw(10);
+    cout << " "  << item.balance << endl;
 }
 
 /**
@@ -222,5 +225,7 @@ void print(Account& item)
 */
 void header()
 {
-    cout << "ACC. ID" << setw(10) << "NAME" << setw(10) << "SURNAME" << setw(10) << "BALANCE" << endl;
+    cout << "---------------------------------------------------------------------------\n";
+    cout << "ACC. ID    |    NAME       |   SURNAME    |   BALANCE" << endl;
+    cout << "---------------------------------------------------------------------------\n";
 }

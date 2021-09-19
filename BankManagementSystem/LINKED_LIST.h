@@ -1,6 +1,5 @@
 #pragma once
 #include <iostream>
-#include <string>
 using namespace std;
 
 
@@ -8,8 +7,8 @@ enum Error_code { success, overflow, underflow, not_found };
 
 struct Account {
 	int account_no;
-	string first_name;
-	string last_name;
+	char first_name[50];
+	char last_name[50];
 	double balance;
 };
 
